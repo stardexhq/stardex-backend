@@ -1,10 +1,9 @@
 /**
- * Stardex API server — the "front desk" that answers questions over the web.
- * Serves `/health` (with a DB check) and `/events` (filtered, paginated reads
- * from Postgres). TODO(#18): add GraphQL.
+ * Stardex backend HTTP server. Serves `/health` (with a DB check) and `/events`
+ * (filtered, paginated reads from Postgres).
  */
 import { createServer } from "node:http";
-import type { EventQuery } from "@stardex/types";
+import type { EventQuery } from "@stardex/sdk";
 import { pingDb } from "./db.ts";
 import { queryEvents } from "./events.ts";
 

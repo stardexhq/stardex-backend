@@ -2,7 +2,7 @@
  * Reads decoded events from Postgres for the `/events` endpoint.
  * Newest-first, with optional filters and opaque cursor pagination.
  */
-import type { EventQuery, Page, StardexEvent } from "@stardex/types";
+import type { EventQuery, Page, StardexEvent } from "@stardex/sdk";
 import { pool } from "./db.ts";
 
 const DEFAULT_LIMIT = 50;
