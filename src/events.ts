@@ -4,6 +4,8 @@
  */
 import type { EventQuery, Page, StardexEvent } from "@stardex/sdk";
 import { pool } from "./db.ts";
+import { decodeCursor, encodeCursor, sendJson } from "./http.ts";
+import type { Context } from "./router.ts";
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 200;
@@ -65,12 +67,17 @@ function toEvent(row: EventRow): StardexEvent {
   };
 }
 
-function encodeCursor(id: string): string {
-  return Buffer.from(id).toString("base64url");
-}
-
-function decodeCursor(cursor?: string): string | null {
-  if (!cursor) return null;
-  const id = Buffer.from(cursor, "base64url").toString("utf8");
-  return /^\d+$/.test(id) ? id : null;
+/** GET /events — public. */
+export async function listEvents({ res, url }: Context): Promise<void> {
+  const params = url.searchParams;
+  const num = (v: string | null) => (v === null ? undefined : Number(v));
+  const page = await queryEvents({
+    contractId: params.get("contractId") ?? undefined,
+    kind: params.get("kind") ?? undefined,
+    fromLedger: num(params.get("fromLedger")),
+    toLedger: num(params.get("toLedger")),
+    limit: num(params.get("limit")),
+    cursor: params.get("cursor") ?? undefined,
+  });
+  sendJson(res, 200, page);
 }

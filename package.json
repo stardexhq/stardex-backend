@@ -1,6 +1,6 @@
 {
   "name": "@stardex/backend",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Stardex backend: HTTP API over the Stardex database.",
   "license": "Apache-2.0",
   "type": "module",
@@ -13,13 +13,15 @@
   "scripts": {
     "dev": "node --env-file-if-exists=.env --watch src/index.ts",
     "start": "node --env-file-if-exists=.env src/index.ts",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "node --test \"test/**/*.test.ts\""
   },
   "dependencies": {
+    "@stellar/stellar-sdk": "^17.1.0",
     "pg": "^8.13.1"
   },
   "devDependencies": {
-    "@stardex/sdk": "^0.1.0",
+    "@stardex/sdk": "^0.2.0",
     "@types/node": "^24.0.0",
     "@types/pg": "^8.11.10",
     "typescript": "^5.9.0"
