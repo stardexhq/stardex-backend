@@ -105,6 +105,18 @@ describe("backend API", { skip: !DATABASE_URL && "DATABASE_URL is not set" }, ()
     assert.equal(dup.status, 409);
   });
 
+  test("payment instructions ask for the outstanding balance", async () => {
+    const created = await call("POST", "/invoices", { account: ACCOUNT, amount: "5", number: `${tag}-P` });
+    assert.equal(created.body.paymentInstructions.amount, "5.0000000");
+    const paymentId = await insertPayment("p", "30000000", null);
+    await call("POST", `/payments/${paymentId}/match`, { invoiceId: created.body.id });
+
+    const partial = await call("GET", `/invoices/${created.body.id}`);
+    assert.equal(partial.body.status, "partial");
+    assert.equal(partial.body.paymentInstructions.amount, "2.0000000");
+    assert.match(partial.body.paymentInstructions.sep7Uri, /amount=2&/);
+  });
+
   test("manual matching pays an invoice and cannot be repeated", async () => {
     const created = await call("POST", "/invoices", { account: ACCOUNT, amount: "5", number: `${tag}-M` });
     const invoiceId = created.body.id;

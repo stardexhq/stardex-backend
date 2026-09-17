@@ -213,6 +213,10 @@ export async function invoiceDetail(
   );
   if (!rows[0]) return null;
   const invoice = toInvoice(rows[0]);
+  // Ask the customer for what is still owed. Once nothing is, fall back to the
+  // full amount so the instructions stay well formed.
+  const owed = BigInt(rows[0].amount) - BigInt(rows[0].amount_received);
+  const payAmount = owed > 0n ? fromUnits(owed) : invoice.amount;
 
   const allocations = await db.query<{
     id: string;
@@ -232,7 +236,7 @@ export async function invoiceDetail(
     paymentInstructions: paymentInstructions(
       invoice.account,
       invoice.asset,
-      invoice.amount,
+      payAmount,
       invoice.reference,
     ),
     allocations: allocations.rows.map(

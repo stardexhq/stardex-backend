@@ -22,7 +22,7 @@ Request and response types are in [`@stardex/sdk`](https://github.com/stardexhq/
 | GET | `/accounts` | Watched accounts (added with `stardex accounts add`) |
 | GET | `/invoices` | Invoices, newest first. Filters: `account`, `status`, `limit`, `cursor` |
 | POST | `/invoices` | Create an invoice: `{ account, amount, asset?, number?, customerName?, customerEmail?, description?, dueDate? }`. Returns it with payment instructions |
-| GET | `/invoices/:id` | One invoice with payment instructions (muxed address, memo ID, SEP-7 link) and allocations |
+| GET | `/invoices/:id` | One invoice with payment instructions (muxed address, memo ID, SEP-7 link, and the amount still owed) and allocations |
 | POST | `/invoices/:id/cancel` | Cancel an invoice that is not fully paid |
 | GET | `/payments` | Incoming payments, newest first. Filters: `account`, `status` (`unmatched`, `matched`, `ignored`), `limit`, `cursor` |
 | POST | `/payments/:id/match` | Match an unmatched payment to an invoice by hand: `{ invoiceId }` |
