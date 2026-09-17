@@ -14,7 +14,8 @@
     "dev": "node --env-file-if-exists=.env --watch src/index.ts",
     "start": "node --env-file-if-exists=.env src/index.ts",
     "typecheck": "tsc -p tsconfig.json",
-    "test": "node --test \"test/**/*.test.ts\""
+    "test": "node --test \"test/**/*.test.ts\"",
+    "demo": "node --env-file-if-exists=.env scripts/demo.ts"
   },
   "dependencies": {
     "@stellar/stellar-sdk": "^17.1.0",
