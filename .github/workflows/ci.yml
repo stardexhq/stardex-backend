@@ -5,11 +5,43 @@ on:
     branches: [main]
   pull_request:
 
+env:
+  # Database schema version this backend is built against (a tag in stardexhq/stardex).
+  STARDEX_SCHEMA_REF: v0.2.0
+
 jobs:
   check:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: stardex
+          POSTGRES_PASSWORD: stardex
+          POSTGRES_DB: stardex
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U stardex -d stardex"
+          --health-interval 3s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://stardex:stardex@localhost:5432/stardex
     steps:
       - uses: actions/checkout@v4
+      - name: Check out the schema
+        uses: actions/checkout@v4
+        with:
+          repository: stardexhq/stardex
+          ref: ${{ env.STARDEX_SCHEMA_REF }}
+          path: schema
+          sparse-checkout: db/migrations
+      - name: Apply migrations
+        run: |
+          for f in schema/db/migrations/*.sql; do
+            psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$f"
+          done
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -17,3 +49,4 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
+      - run: pnpm test
