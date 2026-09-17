@@ -50,6 +50,18 @@ curl "localhost:8080/events?limit=5"
 curl -H "Authorization: Bearer $STARDEX_ADMIN_KEY" localhost:8080/invoices
 ```
 
+## Try the whole flow on testnet
+
+With the backend running and the engine (`stardex run` and `stardex reconcile`) running against the same database, and an account watched with `stardex accounts add`:
+
+```bash
+STARDEX_ADMIN_KEY=your-key pnpm demo --wait 5
+```
+
+The script creates three invoices through the API and pays them from a fresh friendbot-funded testnet account: one in full to its muxed address, one in part with a memo ID, and one with no memo. With `--wait` it polls until the first is paid, the second is partly paid, and the third payment is waiting for review. It uses test XLM only and refuses to run against anything but testnet.
+
+Options: `--account G...` picks which watched account to use (default: the first one), `--wait N` waits up to N minutes. Set `STARDEX_API` to point at a backend other than `http://localhost:8080`, for example the hosted one, where the scheduled job matches payments within 15 minutes.
+
 ## Configuration
 
 | Variable | Default | Purpose |
